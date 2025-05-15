@@ -2,8 +2,6 @@
 
 set -e
 
-chmod +x /init-build.sh /hot-reload.sh
-
 /init-build.sh
 
 catalina.sh run &
