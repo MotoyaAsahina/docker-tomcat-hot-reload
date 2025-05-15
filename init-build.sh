@@ -14,8 +14,6 @@ cd tmp
 
 dirs=(
   "$TOMCAT_ROOT"
-  "$TOMCAT_ROOT"/WEB-INF
-  "$TOMCAT_ROOT"/WEB-INF/classes
   src/main/webapp/WEB-INF
   src/main/webapp/WEB-INF/classes
 )
