@@ -9,7 +9,7 @@ TOMCAT_ROOT=$TOMCAT_HOME/webapps/ROOT
 
 # マウントした src/main/webapp 内に class ファイルを作成しないため
 mkdir -p tmp
-cp -r src tmp
+rsync -a src/ tmp/src/
 cd tmp
 
 dirs=(
@@ -25,7 +25,7 @@ done
 find src/main/java -name '*.java' |
   xargs javac -classpath $TOMCAT_HOME/lib/servlet-api.jar -d src/main/webapp/WEB-INF/classes
 
-cp -r src/main/webapp/* $TOMCAT_ROOT
+rsync -a src/main/webapp/ $TOMCAT_ROOT/
 
 # sed -i 's#<Context>#<Context reloadable="true">#g' $TOMCAT_HOME/conf/context.xml
 cp /app/context.xml $TOMCAT_HOME/conf/context.xml
