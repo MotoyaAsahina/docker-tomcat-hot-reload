@@ -9,16 +9,24 @@ WATCH_DIR=/app/src
 TMP_DIR=/app/tmp
 TMP_SRC=$TMP_DIR/src
 
-while inotifywait -r -e modify,create,delete ${WATCH_DIR}; do
+coproc INO {
+  inotifywait -m -r -e modify,create,delete --format '%w%f' $WATCH_DIR
+}
+
+while read -u "${INO[0]}" -r CHANGED_FILE; do
   echo "=== source changed, rebuilding... ==="
+  echo "changed file: $CHANGED_FILE"
 
-  # cp -r $WATCH_DIR $TMP_DIR
-  rsync -a --delete $WATCH_DIR/ $TMP_SRC/
+  rsync -a --delete --exclude "WEB-INF/classes" $WATCH_DIR/ $TMP_SRC/
 
-  # rm -rf $TMP_SRC/main/webapp/WEB-INF/classes/*
+  if [ "${CHANGED_FILE##*.}" = "java" ]; then
+    echo "recompiling..."
 
-  find $TMP_SRC/main/java -name '*.java' |
-    xargs javac -classpath $TOMCAT_HOME/lib/servlet-api.jar -d $TMP_SRC/main/webapp/WEB-INF/classes || true
+    rm -rf $TMP_SRC/main/webapp/WEB-INF/classes
+
+    find $TMP_SRC/main/java -name '*.java' |
+      xargs javac -classpath $TOMCAT_HOME/lib/servlet-api.jar -d $TMP_SRC/main/webapp/WEB-INF/classes || true
+  fi
 
   rsync -a --delete $TMP_SRC/main/webapp/ $TOMCAT_ROOT/
 
