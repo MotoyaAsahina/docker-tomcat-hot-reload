@@ -25,7 +25,8 @@ while read -u "${INO[0]}" -r CHANGED_FILE; do
     rm -rf $TMP_SRC/main/webapp/WEB-INF/classes
 
     find $TMP_SRC/main/java -name '*.java' |
-      xargs javac -classpath $TOMCAT_HOME/lib/servlet-api.jar -d $TMP_SRC/main/webapp/WEB-INF/classes || true
+      xargs javac -classpath $TOMCAT_HOME/lib/servlet-api.jar:$TMP_SRC'/main/webapp/WEB-INF/lib/*' \
+        -d $TMP_SRC/main/webapp/WEB-INF/classes || true
   fi
 
   rsync -a --delete $TMP_SRC/main/webapp/ $TOMCAT_ROOT/
