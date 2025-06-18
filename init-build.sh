@@ -23,7 +23,8 @@ for d in "${dirs[@]}"; do
 done
 
 find src/main/java -name '*.java' |
-  xargs javac -classpath $TOMCAT_HOME/lib/servlet-api.jar -d src/main/webapp/WEB-INF/classes
+  xargs javac -classpath $TOMCAT_HOME/lib/servlet-api.jar:'src/main/webapp/WEB-INF/lib/*' \
+    -d src/main/webapp/WEB-INF/classes
 
 rsync -a src/main/webapp/ $TOMCAT_ROOT/
 
